@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table Form</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .input-field {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <table id="formTable">
+        <thead>
+            <tr>
+                <th>CableID</th>
+                <th>LowPair</th>
+                <th>HighPair</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Form rows will be appended here -->
+        </tbody>
+    </table>
+
+    <script>
+        let formCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addForm(); // Initialize with one form
+        });
+
+        function addForm() {
+            formCount++;
+            const tbody = document.querySelector('#formTable tbody');
+
+            // Create new row
+            const row = document.createElement('tr');
+            row.id = `form-row-${formCount}`;
+
+            // Create input fields for CableID, LowPair, HighPair
+            const cableIDCell = document.createElement('td');
+            const cableIDField = document.createElement('input');
+            cableIDField.type = 'text';
+            cableIDField.name = `cableID-${formCount}`;
+            cableIDField.placeholder = 'CableID';
+            cableIDField.className = 'input-field';
+            cableIDCell.appendChild(cableIDField);
+
+            const lowPairCell = document.createElement('td');
+            const lowPairField = document.createElement('input');
+            lowPairField.type = 'text';
+            lowPairField.name = `lowPair-${formCount}`;
+            lowPairField.placeholder = 'LowPair';
+            lowPairField.className = 'input-field';
+            lowPairCell.appendChild(lowPairField);
+
+            const highPairCell = document.createElement('td');
+            const highPairField = document.createElement('input');
+            highPairField.type = 'text';
+            highPairField.name = `highPair-${formCount}`;
+            highPairField.placeholder = 'HighPair';
+            highPairField.className = 'input-field';
+            highPairCell.appendChild(highPairField);
+
+            // Create action cell with remove and add buttons
+            const actionCell = document.createElement('td');
+            const removeButton = document.createElement('button');
+            removeButton.innerText = 'Remove';
+            removeButton.addEventListener('click', () => removeForm(row.id));
+
+            actionCell.appendChild(removeButton);
+
+            // Only the last row gets the add button
+            if (formCount === 1) {
+                const addButton = document.createElement('button');
+                addButton.innerText = 'Add Form';
+                addButton.id = 'addButton';
+                addButton.addEventListener('click', addForm);
+                actionCell.appendChild(addButton);
+            }
+
+            // Append cells to row
+            row.appendChild(cableIDCell);
+            row.appendChild(lowPairCell);
+            row.appendChild(highPairCell);
+            row.appendChild(actionCell);
+
+            // Append row to table body
+            tbody.appendChild(row);
+
+            // Update add button position
+            updateButtons();
+        }
+
+        function removeForm(id) {
+            const row = document.getElementById(id);
+            row.remove();
+
+            // Update add button position
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const rows = document.querySelectorAll('#formTable tbody tr');
+            rows.forEach((row, index) => {
+                const actionCell = row.querySelector('td:last-child');
+                const addButton = document.getElementById('addButton');
+
+                if (addButton) {
+                    addButton.remove(); // Remove the add button from the old location
+                }
+
+                if (index === rows.length - 1) {
+                    // Append add button to the last row
+                    const newAddButton = document.createElement('button');
+                    newAddButton.innerText = 'Add Form';
+                    newAddButton.id = 'addButton';
+                    newAddButton.addEventListener('click', addForm);
+                    actionCell.appendChild(newAddButton);
+                }
+
+                const removeButton = actionCell.querySelector('button');
+                removeButton.style.display = (index === rows.length - 1) ? 'inline-block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
